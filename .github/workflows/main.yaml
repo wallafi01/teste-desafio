@@ -32,17 +32,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: AWS CodeDeploy
-      uses: sourcetoad/aws-codedeploy-action@v1
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws_region: us-east-1
-        codedeploy_name: app-challenge
-        codedeploy_group: group-app-challenge
-        codedeploy_register_only: true
-        s3_bucket: s3-app-challenge01
-        s3_folder: deploy
-        max_polling_iterations: 60
-        directory: ./appspec      
+      - uses: actions/checkout@v2
+      - name: Upload ZIP to S3
+        uses: alexshively/s3-zip-upload-for-codedeploy@v1.4
+        env:
+          AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          BUCKET_NAME: s3-app-challenge01
+          AWS_REGION: us-east-1
+          SOURCE_MODE: ZIP
+          SOURCE_PATH: ./deploy
+          DEST_FILE: deploy.zip
+          APPLICATION_NAME: app-challenge
+          DEPLOYMENTGROUP_NAME: group-app-challenge
 
