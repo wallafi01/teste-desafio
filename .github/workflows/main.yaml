@@ -27,11 +27,11 @@ jobs:
         aws-region: us-east-1   
     - name: Terraform init
       working-directory: ./src
-      run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}" -var="ssh_public_key=$SSH_PUBLIC_KEY"
+      run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"
 
     - name: Terraform plan
       working-directory: ./src
-      run: terraform plan -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}" -var="ssh_public_key=$SSH_PUBLIC_KEY" 
+      run: terraform plan -var="ssh_public_key=$SSH_PUBLIC_KEY" 
 
 
     # - name: Terraform Apply 
