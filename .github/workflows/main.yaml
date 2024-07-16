@@ -36,8 +36,8 @@ jobs:
       - name: Upload ZIP to S3
         uses: alexshively/s3-zip-upload-for-codedeploy@v1
         env:
-          AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_SECRET_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BUCKET_NAME: s3-app-challenge01
           AWS_REGION: us-east-1
           SOURCE_MODE: ZIP
