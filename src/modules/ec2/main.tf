@@ -5,7 +5,7 @@
 # }
 
 resource "aws_key_pair" "my_key_pair" {
-  key_name   = "challenge"            
+  key_name   = "kp-challenge"            
   #public_key = file("~/.ssh/id_rsa.pub") s
   public_key = var.ssh_public_key
 }
