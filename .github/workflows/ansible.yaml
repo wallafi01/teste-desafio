@@ -54,7 +54,7 @@ jobs:
         id: get-ec2-id
         run: |
           INSTANCE_NAME="${{ github.event.inputs.instance_name }}"
-          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=server-challenge" --query 'Reservations[*].Instances[*].InstanceId' --output text)
+          INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$INSTANCE_NAME" --query 'Reservations[*].Instances[*].InstanceId' --output text)
           echo "EC2_INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
 
       - name: Get EC2 Public IP
