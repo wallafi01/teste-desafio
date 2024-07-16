@@ -41,7 +41,7 @@ jobs:
     needs: [apply-infra]
     steps:
       - name: Wait for EC2 instance to be ready
-        run: sleep 200  # Aguarda por 60 segundos, ajuste conforme necessário
+        run: sleep 120  # Aguarda por 60 segundos, ajuste conforme necessário
 
       - name: Set up AWS CLI
         uses: aws-actions/configure-aws-credentials@v2
