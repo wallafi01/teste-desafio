@@ -24,4 +24,4 @@ jobs:
 
       - name: Terraform destroy
         working-directory: ./src
-        run: terraform destroy -var="ssh_public_key=$SSH_PUBLIC_KEY" --auto-approve
+        run: terraform destroy  --auto-approve
