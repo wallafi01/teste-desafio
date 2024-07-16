@@ -16,5 +16,5 @@ resource "aws_instance" "webserver-ec2" {
     }
     iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
     user_data = file(var.user_data_file)
-    key_name = data.aws_key_pair.key_name
+    key_name = data.aws_key.key_name
 }
