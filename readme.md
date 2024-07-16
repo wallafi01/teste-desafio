@@ -104,13 +104,10 @@ A infraestrutura será criada pelo Terraform e o AWS CodeDeploy será responsáv
 
   ![alt text](./images/Screenshot_5.png)
 
-  Adicionar repositorio , precisara autenticar ao github 
+  Adicionar repositorio , precisara autenticar ao github  
 
   ![alt text](./images/Screenshot_6.png)
 
-  Adicionar a branch
-
-  ![alt text](./images/Screenshot_7.png)
 
   No acionador manter essas configurações
 
