@@ -44,5 +44,5 @@ jobs:
         s3_bucket: s3-app-challenge01
         s3_folder: deploy
         max_polling_iterations: 60
-        directory: .      
+        directory: ./appspec      
 
