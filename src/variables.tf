@@ -11,7 +11,7 @@ variable "instance_type" {
 }
 
 variable "instance_name" {
-  default = "server-challenge"
+  default = "server-challenge" 
 }
 
 
