@@ -34,6 +34,6 @@ jobs:
       run: terraform plan -var="ssh_public_key=$SSH_PUBLIC_KEY" 
 
 
-    # - name: Terraform Apply 
-    #   working-directory: ./src
-    #   run: terraform apply --auto-approve  
+    - name: Terraform Apply 
+      working-directory: ./src
+      run: terraform apply -var="ssh_public_key=$SSH_PUBLIC_KEY" --auto-approve  
