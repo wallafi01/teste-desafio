@@ -35,6 +35,3 @@ variable "deployment_group_name" {
   default = "group-app-challenge"
 }
 
-variable "ssh_public_key" {
-  description = "SSH Public Key"
-}

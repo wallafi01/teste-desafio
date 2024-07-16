@@ -1,14 +1,9 @@
-# data "aws_key_pair" "key" {
-#   key_name           = var.key_pair
-#   include_public_key = true
+data "aws_key_pair" "key" {
+  key_name           = var.key_pair
+  include_public_key = true
 
-# }
-
-resource "aws_key_pair" "my_key_pair" {
-  key_name   = "kp-challenge"            
-  #public_key = file("~/.ssh/id_rsa.pub") s
-  public_key = var.ssh_public_key
 }
+
 
 
 resource "aws_instance" "webserver-ec2" {
@@ -21,5 +16,5 @@ resource "aws_instance" "webserver-ec2" {
     }
     iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name
     user_data = file(var.user_data_file)
-    key_name = aws_key_pair.my_key_pair.key_name
+    key_name = data.aws_key_pair.key
 }
