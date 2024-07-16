@@ -19,6 +19,4 @@ resource "aws_instance" "webserver-ec2" {
     key_name = data.aws_key_pair.key.key_name
 }
 
-output "ec2_public_ip" {
-  value = aws_instance.webserver-ec2.public_ip
-}
+
