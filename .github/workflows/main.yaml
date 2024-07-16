@@ -12,6 +12,10 @@ jobs:
     steps: 
     - name: Obtendo o código
       uses: actions/checkout@v4.1.5
+    - name: Use SSH key
+      run: echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa    
+      env:
+        SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}     
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
