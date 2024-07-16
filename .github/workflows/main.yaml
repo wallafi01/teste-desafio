@@ -18,19 +18,15 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1   
-
-  terraform_setup:
-    runs-on: ubuntu-latest
-    steps:
-    - name: setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-          terraform_version: 1.5.7
-
-    - name: Terraform init and validate
-      run: |
-        terraform init
+    - name: Terraform init
+      working-directory: ./src
+      run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"
 
     - name: Terraform plan
-      run: |
-        terraform plan -input=false -out=tfplan
+      working-directory: ./src
+      run: terraform plan     
+
+
+    # - name: Terraform Apply 
+    #   working-directory: ./src
+    #   run: terraform apply --auto-approve  
