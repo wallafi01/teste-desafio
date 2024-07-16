@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Upload ZIP to S3
-        uses: alexshively/s3-zip-upload-for-codedeploy@v1.4
+        uses: alexshively/s3-zip-upload-for-codedeploy@v1
         env:
           AWS_SECRET_ID: ${{ secrets.AWS_SECRET_ID }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
