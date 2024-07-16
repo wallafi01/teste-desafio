@@ -1,0 +1,32 @@
+---
+- name: Install AWS CodeDeploy Agent
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install Ruby
+      apt:
+        name: ruby-full
+        state: present
+
+    - name: Install wget
+      apt:
+        name: wget
+        state: present
+
+    - name: Download AWS CodeDeploy Agent installer
+      get_url:
+        url: https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
+        dest: /home/ubuntu/install
+
+    - name: Make the installer executable
+      file:
+        path: /home/ubuntu/install
+        mode: '0755'
+
+    - name: Run the installer
+      command: /home/ubuntu/install auto
