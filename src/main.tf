@@ -25,3 +25,8 @@ module "codedeploy" {
   deployment_group_name = var.deployment_group_name
   instance_name = var.instance_name
 }
+
+
+output "ec2_public_ip" {
+  value = module.ec2.public_ip
+}
