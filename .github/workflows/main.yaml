@@ -5,6 +5,10 @@ on:
     types:
       - created
   workflow_dispatch:
+#   push:
+#     branches:
+#       - main  
+
 
 jobs:
   apply-infra:
@@ -27,11 +31,81 @@ jobs:
 
     - name: Terraform Apply 
       working-directory: ./src
-      run: terraform apply --auto-approve  
-
-  deploy:
+      run: terraform apply --auto-approve
+      
+  info-ec2:
     runs-on: ubuntu-latest
     needs: [apply-infra]
+    steps:
+    - name: Wait for EC2 instance to be ready
+      run: sleep 100  # Aguarda por 100 segundos até instancia estiver 100%, ajuste conforme necessário
+    
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    
+    - name: Obtendo ID da instancia
+      id: get-ec2-id
+      run: |
+        INSTANCE_ID=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=${{env.NAME_EC2}}" --query 'Reservations[*].Instances[*].InstanceId' --output text)
+        echo "EC2_INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+        echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+    
+    - name: Obtendo IP Publico da instancia
+      id: get-ec2-ip
+      run: |
+        INSTANCE_ID=$(cat $GITHUB_ENV | grep INSTANCE_ID | cut -d'=' -f2)
+        PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+        echo "EC2_PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV      
+  
+  provisioner_ansible:
+    runs-on: ubuntu-latest
+    needs: [info-ec2]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+
+      - name: Create SSH directory
+        run: mkdir -p ~/.ssh
+
+      - name: Add SSH private key
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        shell: bash
+
+      - name: Set permissions for SSH private key
+        run: chmod 600 ~/.ssh/id_rsa
+
+      - name: Create Ansible hosts.ini
+        run: |
+          echo "[ec2]" > ./ansible/hosts.ini
+          echo "ec2-instance ansible_host=${{ env.EC2_PUBLIC_IP}} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa" >> ./ansible/hosts.ini
+
+      - name: Run Ansible playbook
+        run: |
+          ansible-playbook -i ./ansible/hosts.ini ./ansible/deploy_codedeploy_agent.yml
+   
+
+  deploy-CD:
+    runs-on: ubuntu-latest
+    needs: [provisioner_ansible]
     steps:
       - uses: actions/checkout@v2
       - name: Upload ZIP to S3
@@ -39,11 +113,11 @@ jobs:
         env:
           AWS_SECRET_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BUCKET_NAME: s3-app-challenge01
+          BUCKET_NAME: ${{ secrets.AWS_BUCKET_DEPLOY_NAME }}
           AWS_REGION: us-east-1
           SOURCE_MODE: ZIP
           SOURCE_PATH: ./deploy
           DEST_FILE: deploy.zip
-          APPLICATION_NAME: app-challenge
-          DEPLOYMENTGROUP_NAME: group-app-challenge
+          APPLICATION_NAME: ${{env.NAME_APP}}
+          DEPLOYMENTGROUP_NAME: ${{env.NAME_GROUP}}
 

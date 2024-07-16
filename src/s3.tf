@@ -1,6 +1,6 @@
 
 resource "aws_s3_bucket" "code_deploy" {
-  bucket = "s3-app-challenge01"  # substitua pelo nome único do seu bucket S3
+  bucket = var.name_bucket_cd
 
   tags = {
     Name = "Bucket para armazenar artifacts do dpeloy"

@@ -34,3 +34,7 @@ variable "name_app" {
 variable "deployment_group_name" {
   default = "group-app-challenge"
 }
+
+variable "name_bucket_cd" {
+  default = "s3-app-challenge01"
+}
