@@ -1,0 +1,84 @@
+name: Deployment Pipeline
+
+on:
+  release:
+    types:
+      - created
+  workflow_dispatch:
+    
+jobs:
+  terraform_setup:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Terraform
+      run: |
+        wget https://releases.hashicorp.com/terraform/1.0.2/terraform_1.0.2_linux_amd64.zip
+        unzip terraform_1.0.2_linux_amd64.zip
+        sudo mv terraform /usr/local/bin/
+        terraform --version
+
+    - name: Initialize Terraform
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: terraform_setup
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Ansible
+      run: |
+        sudo apt update
+        sudo apt install -y ansible
+
+    - name: Configure SSH Key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+    - name: Create Ansible hosts file
+      run: |
+        echo '[web]' > ./hosts
+        echo '${{ secrets.EC2_PUBLIC_IP }} ansible_ssh_user=ubuntu' >> ./hosts
+
+    - name: Create Ansible playbook
+      run: |
+        echo '- hosts: web' > ./install_nginx.yml
+        echo '  become: yes' >> ./install_nginx.yml
+        echo '  tasks:' >> ./install_nginx.yml
+        echo '    - name: Update apt repository' >> ./install_nginx.yml
+        echo '      apt:' >> ./install_nginx.yml
+        echo '        update_cache: yes' >> ./install_nginx.yml
+        echo '    - name: Install Nginx' >> ./install_nginx.yml
+        echo '      apt:' >> ./install_nginx.yml
+        echo '        name: nginx' >> ./install_nginx.yml
+        echo '        state: present' >> ./install_nginx.yml
+
+    - name: Run Ansible playbook
+      run: ansible-playbook -i ./hosts ./install_nginx.yml
+
+  aws_codedeploy:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+    - name: AWS CodeDeploy
+      uses: sourcetoad/aws-codedeploy-action@v1
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+        aws_region: us-east-1
+        codedeploy_name: app-challenge
+        codedeploy_group: group-app-challenge
+        codedeploy_register_only: true
+        s3_bucket: s3-app-challenge01
+        s3_folder: deploy
+        max_polling_iterations: 60
+        directory: ./
