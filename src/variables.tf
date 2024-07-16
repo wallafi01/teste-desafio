@@ -16,7 +16,7 @@ variable "instance_name" {
 
 
 variable "key_pair" {
-  default = "key-challenge-01"
+  default = "key-challenge"
   
 }
 variable "user_data_file" {
@@ -33,8 +33,4 @@ variable "name_app" {
 
 variable "deployment_group_name" {
   default = "group-app-challenge"
-}
-
-variable "ssh_public_key" {
-  description = "SSH Public Key"
 }

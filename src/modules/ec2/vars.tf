@@ -30,7 +30,3 @@ variable "user_data_file" {
   type        = string
   default     = "script.sh"  
 }
-
-variable "ssh_public_key" {
-  description = "SSH Public Key"
-}
