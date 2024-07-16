@@ -26,6 +26,11 @@ resource "aws_iam_role_policy_attachment" "codedeploy" {
   role       = aws_iam_role.ec2_instance_role.name
 }
 
+resource "aws_iam_role_policy_attachment" "s3_full_access" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  role       = aws_iam_role.ec2_instance_role.name
+}
+
 resource "aws_iam_instance_profile" "ec2_instance_profile" {
   name = "ec2-instance-001"
   role = aws_iam_role.ec2_instance_role.name
