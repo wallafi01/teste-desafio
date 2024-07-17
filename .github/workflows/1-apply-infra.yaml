@@ -56,18 +56,15 @@ jobs:
         working-directory: ./src
         run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"        
 
-      - name: Set environment variable
-        working-directory: ./src   
-        run: | 
-          INSTANCE_ID=$(terraform output -raw ec2_instance_id)
-          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
-
+      - name: Execute Terraform command
+        run: terraform output -raw ec2_instance_id > instance_id.txt
+        working-directory: ./src
+    
       - name: Set environment variable using alsosee/envset
         uses: alsosee/envset@v1
         with:
           name: INSTANCE_ID
-          value: ${{ env.INSTANCE_ID }}        
-     
+          value: ${{ env.INST_ID }}
         
       - name: AWS SSM Send-Command
         uses: peterkimzz/aws-ssm-send-command@master
@@ -76,7 +73,7 @@ jobs:
           aws-region: "us-east-1"
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: ${{ env.INSTANCE_ID }}
+          instance-ids: ${{ env.INST_ID}}
           command: |
             sudo apt-get update -y
             sudo apt-get upgrade -y
