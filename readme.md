@@ -42,86 +42,88 @@ A infraestrutura será criada pelo Terraform e o AWS CodeDeploy será responsáv
 
   ![alt text](./images/Screenshot_18.png)
 
-  - Observação : Por questões de segurança , e evitar de ter a chave.pem para acessar a instancia no repositorio e recomendado criar a chave .pem na console e adicionar o nome da chave no campo variable "key_pair"
+  - Observação : Por questões de segurança e recomendado criar a chave .pem na qual será para o acesso a EC2 ,diretamente na console e adicionar o nome da chave no campo variable "key_pair".
 
-**5. Configurar as variaveis para o funcionamento da Pipeline no arquivo ./github/workflows/main.yaml**  
+**5. Configurar as variaveis e Secrets para o funcionamento da Pipeline no arquivo ./github/workflows/main.yaml**  
 
 **Etapa 1 - Deploy da Infraestrtura com Trerraform**
 
-    - Objetivo desta etapa e a implantação de uma Infra AWS ,contendo EC2 , S3 , VPC e CodeDeploy
+    - Objetivo desta etapa e a implantação de uma Infra AWS ,contendo EC2 , S3 , VPC e CodeDeploy.
 
   ![alt text](./images/Screenshot_21.png) 
   ![alt text](./images/Screenshot_22.png)
 
- - No repositorio > Settings > Security (Secrets and variabels) > actions > Secrets : Repository Secrets > New Reposiroty Secrets , adicionar todas as secrets selecionadas
+ - No repositorio > Settings > Security (Secrets and variabels) > actions > Secrets : Repository Secrets > New Repository Secrets , adicionar todas as secrets selecionadas.
 
- - **AWS_ACCESS_KEY_ID  / AWS_SECRET_ACCESS_KEY**  - Chaves programaticas geradas na console nas etapas incias
- - **AWS_BUCKET_NAME** - Nome do bucket criado na console , para gerenciar o estado do terraform
- - **AWS_BUCKET_FILE** - Nome do arquvio gerado pelo terraform (ex: terraform.tfstate)
+ - **AWS_ACCESS_KEY_ID  / AWS_SECRET_ACCESS_KEY**  - Chaves programaticas geradas na console na etapa incial.
+ - **AWS_BUCKET_NAME** - Nome do bucket criado na console , para gerenciar o estado do terraform.
+ - **AWS_BUCKET_FILE** - Nome do arquivo gerado pelo terraform (ex: terraform.tfstate).
  
 **Etapa 2 - Informações da EC2:**
 
-    - Objetivo desta etapa e apenas para obter as informações da ec2 como o IP público para o ansible acessar
+    - Objetivo desta etapa e obter as informações da ec2 como o IP público para o ansible acessa-lá.
 
   ![alt text](./images/Screenshot_25.png)   
 
-  - No repositorio > Settings > Security (Secrets and variabels) > actions > variables>  Repository variables > New Reposiroty Secrets , adicionar a variavel abaixo 
+  - No repositorio > Settings > Security (Secrets and variabels) > actions > variables >  Repository variables > New Reposiroty Secrets , adicionar a variavel abaixo .
 
- - **NAME_EC2** - Deverá conter o mesmo nome da instancia , implantada pelo terraform
+ - **NAME_EC2** - Deverá conter o mesmo nome da instancia , implantada pelo terraform conforme abaixo no arquivo ./src/variables.tf.
+
+  ![alt text](./images/Screenshot_29.png)    
 
 **Etapa 3 - Provisionamento com Ansible:**
 
-    - Objetivo desta etapa e instalar o Agent do Code Deploy na ec2
+    - Objetivo desta etapa e instalar o Agent do Code Deploy na ec2.
 
   ![alt text](./images/Screenshot_24.png)
 
- - **SSH_PRIVATE_KEY**  - Adicionar o conteudo da chave ".pem" da instancia implantada nas secrets, criada na console para o ansible conseguir acessar o servidor
+ - **SSH_PRIVATE_KEY**  - Adicionar o conteudo da chave ".pem" da instancia implantada nas secrets, criada na console para o ansible conseguir acessar o servidor.
 
 
 **Etapa 4 - Deploy com CodeDeploy:**
 
-    - Nesta etapa o CodeDeploy irá realizar a implantação na EC2
+    - Nesta etapa o CodeDeploy irá realizar a implantação na EC2.
 
 
   ![alt text](./images/Screenshot_26.png)  
 
 
- - **AWS_BUCKET_DEPLOY_NAME**  - Adicionar na Secrets , o nome do bucket que irá receber os Artiacts do CodeDeploy , o nome deverá ser o mesmo que foi definido no terraform 
+ - **AWS_BUCKET_DEPLOY_NAME**  - Adicionar na Secrets , o nome do bucket que irá receber os Artiacts do CodeDeploy , o nome deverá ser o mesmo que foi definido no terraform .
  - **NAME_APP / NAME_GROUP** - Adicionar como variaveis , o o nome deverá ser o mesmo que foi definido no terraform conforme abaixo:
 
   ![alt text](./images/Screenshot_27.png)
 
-- **SOURCE_PATH: ./deploy** - Adicionar o path que contenha o appspec.yml e os scripts
+- **SOURCE_PATH: ./deploy** - Adicionar o path que contenha o appspec.yml e os scripts.
 
   ![alt text](./images/Screenshot_28.png)
 
 **Etapa 5 - Criação CodePipeline:**
 
-    - Nesta etapa o iremos criar o CodePipeline , para realizar a integração do Repositorio juntamente ao CodeDeploy
-    - Observação: A acriação da ferramenta será via console , poís será preciso realizar autenticação juntamente ao GitHub
+    - Nesta etapa o iremos criar o CodePipeline , para realizar a integração do Repositorio juntamente ao CodeDeploy.
+    - Observação: A acriação da ferramenta será via console , poís será preciso realizar autenticação juntamente ao GitHub.
 
-  ir em Code Pipeline > criar Pipeline
+  ir em Code Pipeline > criar Pipeline.
 
   ![alt text](./images/Screenshot_5.png)
 
-  Adicionar repositorio , precisara autenticar ao github  
+  Adicionar repositorio , precisara autenticar ao github  .
 
   ![alt text](./images/Screenshot_6.png)
 
 
-  No acionador manter essas configurações
+  No acionador manter essas configurações.
 
   ![alt text](./images/Screenshot_8.png)
 
-  Ignorar etapa de compilação
+  Ignorar etapa de compilação.
 
   ![alt text](./images/Screenshot_9.png)
 
-  Etapa de implantação , selecionar o CodeDeploy como provedor , Nome do aplicativo eo Grupo de implantação
+  Etapa de implantação , selecionar o CodeDeploy como provedor , Nome do aplicativo eo Grupo de implantação.
 
   ![alt text](./images/Screenshot_10.png)
 
-  Proximo , revisar e criar pipeline  
+  Proximo , revisar e criar pipeline  .
 
 
 ## 2 - Piipeline CI/CD
