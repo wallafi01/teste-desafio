@@ -4,12 +4,8 @@
 sudo apt-get update -y
 sudo apt-get upgrade -y
 sudo apt-get install -y nginx
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw allow 'Nginx HTTP'
-sudo ufw --force enable
-sudo systemctl restart nginx
-sudo chown -R $USER:$USER /path/to/some/directory
+sudo systemctl start nginx
+sudo systemctl enable nginx
 
 ##aget ssm
 sudo snap install amazon-ssm-agent --classic

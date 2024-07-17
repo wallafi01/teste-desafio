@@ -99,17 +99,17 @@ A infraestrutura será criada pelo Terraform e o AWS CodeDeploy será responsáv
 
 **5. Configurando appsec.yml**
 
-    - Nesta etapa o CodeDeploy irá realizar a implantação na EC2.
+  - Nesta etapa o CodeDeploy irá realizar a implantação na EC2.
 
-
-  o arquivo appspec.yml , localizado na raiz do repositorio informará o CodeDeploy Agent sobre os comandos que você deseja executar durante a implantação
+  
+  - O arquivo appspec.yml , localizado ./deploy do repositorio informará ao CodeDeploy  os comandos que você deseja executar durante a implantação
 
   ![alt text](./images/Screenshot_16.png)  
 
 
-  **arquivo: scripts/deploy.sh**
+  **Scripts:**
 
-  Será responsavel por fazer o deploy do repositorio
+  Serão responsavel por inicializar servidor Nginx e implantar a aplicação
 
   Gerar um token do repositorio , e criar uma secrets no repositorio com nome "token_git" e adicionaro token
 
