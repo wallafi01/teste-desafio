@@ -44,7 +44,3 @@ output "codedeploy_deployment_group_name" {
   description = "The name of the CodeDeploy deployment group"
   value       = module.codedeploy.codedeploy_deployment_group_name
 }
-
-output "bucket_name" {
-  value = aws_s3_bucket.code_deploy
-}
