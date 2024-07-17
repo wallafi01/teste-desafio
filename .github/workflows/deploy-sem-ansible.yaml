@@ -51,12 +51,11 @@ jobs:
 
       - name: Get Terraform Outputs
         run: |
-            echo "EC2_INSTANCE_ID=$(terraform output -raw ec2_instance_id)" >> $GITHUB_ENV
             echo "APPLICATION_NAME=$(terraform output -raw application_name)" >> $GITHUB_ENV
             echo "DEPLOYMENT_GROUP_NAME=$(terraform output -raw deployment_group_name)" >> $GITHUB_ENV
             echo "S3_BUCKET_NAME=$(terraform output -raw bucket_name)" >> $GITHUB_ENV  
-
-        working-directory: ./src                  
+        working-directory: ./src   
+                       
       - name: Upload ZIP to S3
         uses: alexshively/s3-zip-upload-for-codedeploy@v1
         env:
