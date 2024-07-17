@@ -14,3 +14,9 @@ resource "aws_s3_bucket_versioning" "versionamento" {
     status = "Enabled"
   }
 }
+
+
+output "bucket_name" {
+  value = aws_s3_bucket.code_deploy.bucket
+}
+
