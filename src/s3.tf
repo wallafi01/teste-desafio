@@ -1,7 +1,7 @@
 
 resource "aws_s3_bucket" "code_deploy" {
   bucket = var.name_bucket_cd
-
+  force_destroy = true
   tags = {
     Name = "Bucket para armazenar artifacts do dpeloy"
   }

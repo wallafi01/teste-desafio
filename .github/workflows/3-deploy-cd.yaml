@@ -1,0 +1,44 @@
+name: Deployment Pipeline sem ansible
+
+on:
+  workflow_run:
+    workflows: ["Install-servicos"]
+    types:
+      - completed
+
+
+jobs:
+  deploy-CD:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1    
+      - name: Terraform init
+        working-directory: ./src
+        run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"   
+
+      - name: Get Terraform Outputs
+        run: |
+            echo "APPLICATION_NAME=$(terraform output -raw application_name)" >> $GITHUB_ENV
+            echo "DEPLOYMENT_GROUP_NAME=$(terraform output -raw deployment_group_name)" >> $GITHUB_ENV
+            echo "S3_BUCKET_NAME=$(terraform output -raw bucket_name)" >> $GITHUB_ENV  
+        working-directory: ./src   
+
+      - name: Upload ZIP to S3
+        uses: alexshively/s3-zip-upload-for-codedeploy@v1
+        env:
+          AWS_SECRET_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
+          AWS_REGION: us-east-1
+          SOURCE_MODE: ZIP
+          SOURCE_PATH: ./deploy
+          DEST_FILE: deploy.zip
+          APPLICATION_NAME: ${{env.APPLICATION_NAME}}
+          DEPLOYMENTGROUP_NAME: ${{env.DEPLOYMENT_GROUP_NAME}}
+
