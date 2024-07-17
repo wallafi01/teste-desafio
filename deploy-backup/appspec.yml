@@ -1,0 +1,10 @@
+version: 0.0
+os: linux  
+files:
+  - source: source
+    destination: /usr/share/nginx/html
+hooks:
+  ValidateService:
+    - location: scripts/deploy.sh  
+      timeout: 150
+      runas: root  
