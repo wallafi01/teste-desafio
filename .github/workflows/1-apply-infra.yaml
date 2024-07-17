@@ -56,9 +56,18 @@ jobs:
         working-directory: ./src
         run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"        
 
-      - name: Get EC2 Instance ID
-        run: echo "INSTANCE_ID=$(terraform output -raw ec2_instance_id)" >> $GITHUB_ENV
-        working-directory: ./src        
+      - name: Set environment variable
+        working-directory: ./src   
+        run: | 
+          INSTANCE_ID=$(terraform output -raw ec2_instance_id)
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+
+      - name: Set environment variable using alsosee/envset
+        uses: alsosee/envset@v1
+        with:
+          name: INSTANCE_ID
+          value: ${{ env.INSTANCE_ID }}        
+     
         
       - name: AWS SSM Send-Command
         uses: peterkimzz/aws-ssm-send-command@master
