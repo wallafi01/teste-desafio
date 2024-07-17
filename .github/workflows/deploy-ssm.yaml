@@ -44,6 +44,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Get EC2 Instance ID
+        run: echo "INSTANCE_ID=$(terraform output -raw ec2_instance_id)" >> $GITHUB_ENV
+        working-directory: ./src        
         
       - name: AWS SSM Send-Command
         uses: peterkimzz/aws-ssm-send-command@master
