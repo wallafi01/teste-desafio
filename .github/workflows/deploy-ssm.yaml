@@ -1,4 +1,4 @@
-name: Deployment Pipeline sem ansible
+name: Deployment Pipeline com SSM
 
 on:
   release:
