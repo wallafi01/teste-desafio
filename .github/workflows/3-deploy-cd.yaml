@@ -1,11 +1,10 @@
-name: Deployment com CodeDeploy
+name: Deploy-infra
 
 on:
   workflow_run:
-    workflows: ["Instalando-servicos"]
+    workflows: [Install-infra]
     types:
       - completed
-
 
 jobs:
   deploy-CD:

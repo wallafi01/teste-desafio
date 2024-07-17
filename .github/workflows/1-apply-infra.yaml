@@ -1,4 +1,4 @@
-name: Apply-infra-install
+name: Apply-infra
 
 on:
   release:
@@ -38,68 +38,3 @@ jobs:
       run: echo "INSTANCE_ID=$(terraform output -raw ec2_instance_id)" >> $GITHUB_ENV
       working-directory: ./src     
   
-  Instalando-servicos:
-    needs: apply-infra
-    runs-on: ubuntu-latest     
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1          
-
-      - name: Terraform init
-        working-directory: ./src
-        run: terraform init -backend-config="bucket=${{ secrets.AWS_BUCKET_NAME }}" -backend-config="key=${{ secrets.AWS_BUCKET_FILE }}"        
-
-      - name: Execute Terraform command
-        run: terraform output -raw ec2_instance_id > instance_id.txt
-        working-directory: ./src
-    
-      - name: Set environment variable using alsosee/envset
-        uses: alsosee/envset@v1
-        with:
-          name: INSTANCE_ID
-          value: ${{ env.INST_ID }}
-        
-      - name: AWS SSM Send-Command
-        uses: peterkimzz/aws-ssm-send-command@master
-        id: ssm
-        with:
-          aws-region: "us-east-1"
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          instance-ids: ${{ env.INST_ID}}
-          command: |
-            sudo apt-get update -y
-            sudo apt-get upgrade -y
-            sudo apt-get install -y nginx
-            sudo systemctl start nginx
-            sudo systemctl enable nginx
-        
-
-            sudo snap install amazon-ssm-agent --classic
-            sudo systemctl enable amazon-ssm-agent
-            sudo systemctl start amazon-ssm-agent
-        
-            sudo apt-get update -y
-            sudo apt-get install -y ruby-full wget
-            cd /home/ubuntu
-            wget https://aws-codedeploy-us-east-1.s3.us-east-1.amazonaws.com/latest/install
-            chmod +x ./install
-            sudo ./install auto
-            sudo systemctl enable codedeploy-agent
-            sudo systemctl start codedeploy-agent
-
-            sudo apt-get install -y awscli
-
-      
-          comment: "Install and configure Nginx, SSM Agent, CodeDeploy Agent, and CloudWatch Agent"
-        
-      - name: Get the outputs
-        run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"          
-
