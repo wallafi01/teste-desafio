@@ -77,7 +77,7 @@ A infraestrutura será criada pelo Terraform e o AWS CodeDeploy será responsáv
 
   ![alt text](./images/Screenshot_24.png)
 
- - **SSH_PRIVATE_KEY**  - Adicionar o conteudo da chave ".pem" da instancia implantada nas secrets, criada na console para o ansible conseguir acessar o servidor.
+ - **SSH_PRIVATE_KEY**  - Adicionar o conteudo da chave ".pem" criada na console para o ansible conseguir acessar o servidor.
 
 
 **Etapa 4 - Deploy com CodeDeploy:**
@@ -100,7 +100,7 @@ A infraestrutura será criada pelo Terraform e o AWS CodeDeploy será responsáv
 **Etapa 5 - Criação CodePipeline:**
 
     - Nesta etapa o iremos criar o CodePipeline , para realizar a integração do Repositorio juntamente ao CodeDeploy.
-    - Observação: A acriação da ferramenta será via console , poís será preciso realizar autenticação juntamente ao GitHub.
+    - Observação: A criação da ferramenta será via console , poís será preciso realizar autenticação juntamente ao GitHub.
 
   ir em Code Pipeline > criar Pipeline.
 
