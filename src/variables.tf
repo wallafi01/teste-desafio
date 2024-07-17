@@ -1,4 +1,4 @@
-#EC2
+#3EC2
 variable "region" {
   default = "us-east-1"
 }
@@ -20,11 +20,11 @@ variable "key_pair" {
   default = "key-challenge"
   
 }
-variable "user_data_file" {
-  description = "The path to the user data script file"
-  type        = string
-  default     = "script.sh"  
-}
+# variable "user_data_file" {
+#   description = "The path to the user data script file"
+#   type        = string
+#   default     = "script.sh"  
+# }
 
 ##### code deploy
 

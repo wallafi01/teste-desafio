@@ -25,8 +25,8 @@ variable "key_pair" {
 
 
 
-variable "user_data_file" {
-  description = "The path to the user data script file"
-  type        = string
-  default     = "script.sh"  
-}
+# variable "user_data_file" {
+#   description = "The path to the user data script file"
+#   type        = string
+#   default     = "script.sh"  
+# }
