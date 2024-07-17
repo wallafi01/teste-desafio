@@ -2,7 +2,7 @@ name: Deployment com CodeDeploy
 
 on:
   workflow_run:
-    workflows: ["Install-servicos"]
+    workflows: ["Instalando-servicos"]
     types:
       - completed
 
