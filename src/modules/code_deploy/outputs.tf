@@ -5,7 +5,7 @@ output "codedeploy_app_name" {
 
 output "codedeploy_deployment_group_name" {
   description = "The name of the CodeDeploy deployment group"
-  value       = aws_codedeploy_deployment_group.group_app_challenge.name
+  value       = aws_codedeploy_deployment_group.group_app_challenge
 }
 
 output "codedeploy_role_arn" {
