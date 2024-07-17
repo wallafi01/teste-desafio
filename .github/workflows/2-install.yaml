@@ -1,4 +1,4 @@
-name: Deployment Pipeline com SSM
+name: Install-infra
 
 on:
   workflow_run:
